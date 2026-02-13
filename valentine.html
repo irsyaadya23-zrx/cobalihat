@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <title>Valentine Flower Growth</title>
+    <style>
+        :root {
+            --flower-color: linear-gradient(to top, #0044ca, #0044ca, #00d2ff, #ffffff);
+            --glow-color: rgba(0, 210, 255, 0.8);
+            --grass-color: #00ff88;
+            --fall-flower-color: #ff4dea;
+            --stigma-color: #fbff00;
+        }
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000;
+            overflow: hidden;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        /* Teks Happy Valentine */
+        .title {
+            position: absolute;
+            top: 15%;
+            width: 100%;
+            text-align: center;
+            color: white;
+            font-size: 4rem;
+            font-weight: bold;
+            font-family: Dancing Script;
+            text-shadow: 0 0 10px var(--fall-flower-color), 0 0 20px var(--fall-flower-color);
+            opacity: 0;
+            animation: fadeIn 3s ease-in forwards 2s;
+            z-index: 10;
+        }
+
+        /* Container Taman */
+        .garden {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 300px;
+            display: flex;
+            justify-content: center;
+            align-items: flex-end;
+        }
+
+        /* Animasi Rumput */
+        .grass-container {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+        }
+
+        .blade {
+            width: 4px;
+            background: linear-gradient(to top, #113311, var(--grass-color));
+            border-top-left-radius: 50%;
+            border-top-right-radius: 50%;
+            box-shadow: 0 0 5px var(--grass-color);
+            transform-origin: bottom;
+            height: 0;
+            animation: growGrass 2s ease-out forwards, sway 3s ease-in-out infinite alternate;
+        }
+
+        /* Animasi Bunga Tumbuh */
+        .flower {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            margin: 0 20px;
+        }
+
+        .stem {
+            width: 12px;
+            height: 0;
+            border-radius: 50px 50px 0 0;
+            background: linear-gradient(to top, #004422, #008844);
+            animation: growStem 3s ease-out forwards 1s;
+        }
+
+        .flower-head {
+            width: 0;
+            height: 0;
+            position: absolute;
+            top: -80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards 3s;
+        }
+
+        .stigma {
+          position: absolute;
+          width: 0px;
+          height: 0px;
+          top: 25px;
+          border-radius: 100%;
+          background: var(--stigma-color);
+          opacity: 0;
+          animation: fadeIn 1.5s ease-out forwards 2.5s, mekar2 2.5s ease-out forwards 2.5s, slideDown 1.5s ease-out forwards 2.8s;
+        }
+
+        .petal {
+            position: absolute;
+            width: 60px;
+            height: 0px;
+            background: var(--flower-color);
+            border-radius: 100% 100% 0 0;
+            box-shadow: 0 0 15px var(--glow-color);
+            transform-origin: bottom center;
+            animation: mekar 1.5s ease-out forwards 3s;
+        }
+
+        .flower-leaf {
+            width: 0;
+            height: 0;
+            position: absolute;
+            bottom: 210px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: -1;
+            opacity: 0;
+            animation: fadeIn 1.5s ease-out forwards 1.8s, sway2 3s ease-in-out infinite alternate;
+        }
+
+        .leaf {
+            position: absolute;
+            width: 50px;
+            height: 0px;
+            background: linear-gradient(to top, #004422, #008844);
+            border-radius: 100% 100% 100% 100%;
+            transform-origin: bottom center;
+            animation: mekar3 1.5s ease-out forwards 1.8s;
+        }
+
+        /* Partikel Hujan Bunga */
+        .rain-petal {
+            position: absolute;
+            color: var(--fall-flower-color);
+            text-shadow: 0 0 8px var(--glow-color);
+            user-select: none;
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        .amplop {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            left: 10px;
+            width: 100px;
+            height: 100px;
+            z-index: 999;
+            top: 380px;
+            opacity: 0;
+            animation: slideRight 2s ease-out forwards 5s;
+        }
+
+        .icon-amplop {
+            font-size: 40px;
+            transform: rotate(-30deg);
+        }
+
+        .amplop p {
+            font-size: 10px;
+            color: white;
+        }
+
+        .surat {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            
+
+            /* Sembunyi secara default */
+            opacity: 0;
+            pointer-events: none;
+            transition: all 0.5s ease-in-out;
+        }
+
+        .surat.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .isi-surat {
+            width: 50%;
+            height: 70;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 10px;
+            background-color: white;
+            border: 5px dashed #ff00d4;
+            padding: 30px;
+            border-radius: 30px;
+            box-shadow: 0 0 10px #ff00d4, 0 0 15px pink, 0 0 20px white;
+        }
+
+        .isi-surat button {
+            color: #ff00d4;
+            font-size: 12px;
+            text-align: center;
+            border-radius: 50px;
+            border: 2px solid pink;
+            background-color: transparent;
+        }
+
+        .isi-surat h2 {
+            color: black;
+            font-size: 16px;
+            text-align: left;
+        }
+
+        .isi-surat p {
+            color: black;
+            font-size: 14px;
+            text-align: justify;
+            text-indent: 30px;
+        }
+
+        .isi-surat h3 {
+            color: rgba(0, 0, 0, 0.3);
+            font-size: 14px;
+            text-align: right;
+        }
+
+        /* Keyframes */
+        @keyframes fadeIn { to { opacity: 1; } }
+
+        @keyframes mekar { to {height: 120px;}}
+
+        @keyframes mekar2 { to {width: 70px; height: 70px;}}
+
+        @keyframes mekar3 { to {height: 150px;}}
+
+        @keyframes slideDown {
+            from {
+                transform: translateY(-50px);
+            }
+            to {
+                transform: translateY(0px)
+            }
+        }
+
+        @keyframes growGrass {
+            to { height: 80px; }
+        }
+
+        @keyframes growStem {
+            to { height: 360px; }
+        }
+
+        @keyframes bloom {
+            to { width: 120px; height: 120px; opacity: 1; }
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(-5deg); }
+            100% { transform: rotate(5deg); }
+        }
+
+        @keyframes zigzag {
+            0% { transform: translateX(0) rotate(0deg); }
+            25% { transform: translateX(30px) rotate(45deg); }
+            50% { transform: translateX(-30px) rotate(90deg); }
+            75% { transform: translateX(30px) rotate(135deg); }
+            100% { transform: translateX(0) rotate(180deg); }
+        }
+
+        @keyframes fall {
+            to { top: 110vh; }
+        }
+
+        @keyframes slideRight {
+            from {
+                transform: translateX(-100px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0px);
+            }
+        }
+
+        @media screen and (max-width: 768px) {
+            .title {
+                top: 50px;
+                bottom: 20px;
+                font-size: 3rem;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <audio id="song" src="backsound.mp3" preload="auto" loop></audio>
+
+    <div class="title" id="judul">Happy Valentine Day!</div>
+
+    <div class="garden" id="garden">
+        <div class="flower">
+            <div class="flower-head">
+                <div class="petal" style="transform: rotate(0deg);"></div>
+                <div class="petal" style="transform: rotate(72deg);"></div>
+                <div class="petal" style="transform: rotate(144deg);"></div>
+                <div class="petal" style="transform: rotate(216deg);"></div>
+                <div class="petal" style="transform: rotate(288deg);"></div>
+                <div class="stigma"></div>
+              </div>
+            <div class="stem"></div>
+            
+            <div class="flower-leaf">
+                <div class="leaf" style="transform: rotate(72deg);"></div>
+                <div class="leaf" style="transform: rotate(288deg);"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="grass-container" id="grassField"></div>
+
+    <div class="amplop" id="amplop" onclick="openLetter()">
+                <div class="icon-amplop">💌</div>
+                <p>Pencet untuk buka amplopnya!</p>
+            </div>
+            <div class="surat" id="surat">
+                <div class="isi-surat">
+                     <button onclick="closeLetter()">Tutup</button>
+                     <h2>Dear, My Girl</h2>
+                     <p>Kalau yang waktu itu viral di tiktok cowo kasih patung bunga matahari karena cowonya jago di seni, maka izinkanlah aku, seorang yang memiliki keahlian di bidang IT untuk membuat karya berupa bunga digital ini untuk ucapan valentine 2026.</p>
+                     <h3><i>From Your Man, Icad</i></h3>
+                </div>
+            </div>
+
+    <script>
+        // Ambil nama dari index.html
+        window.onload = function() {
+            let namaTersimpan = localStorage.getItem("namaDoi");
+
+            if (namaTersimpan) {
+                document.getElementById("judul").innerText = "Happy Valentine, " + namaTersimpan + "! ❤️";
+            } else {
+                document.getElementById("judul").innerText = "Happy Valentine!";
+            }
+
+            // Musik
+            let lagu = document.getElementById("song");
+
+            // Putar otomatis
+            lagu.play().catch(error => {
+                // Jika browser blokir autoplay
+                console.log("Autoplay diblokir, menunggu klik user.");
+                document.body.addEventListener('click', function() {
+                    lagu.play();
+                }, {once: true });
+            });
+        };
+
+        // Membuat Rumput Secara Dinamis
+        const grassField = document.getElementById('grassField');
+        for (let i = 0; i < 60; i++) {
+            const blade = document.createElement('div');
+            blade.className = 'blade';
+            blade.style.left = Math.random() * 100 + '%';
+            blade.style.animationDelay = Math.random() * 2 + 's';
+            blade.style.height = (40 + Math.random() * 60) + 'px';
+            grassField.appendChild(blade);
+        }
+
+        // Membuat Hujan Bunga (Flower Rain)
+        function createRain() {
+            const petal = document.createElement('div');
+            petal.className = 'rain-petal';
+            petal.innerHTML = '✿'; // Karakter bunga
+            petal.style.left = Math.random() * 100 + 'vw';
+            petal.style.top = '-5vh';
+            petal.style.fontSize = (Math.random() * 20 + 10) + 'px';
+            
+            // Durasi jatuh
+            const duration = Math.random() * 5 + 6 + 's';
+            petal.style.animation = `fall ${duration} linear forwards, zigzag 2s ease-in-out infinite`;
+
+            document.body.appendChild(petal);
+
+            // Hapus elemen setelah selesai jatuh agar tidak membebani RAM
+            setTimeout(() => {
+                petal.remove();
+            }, 7000);
+        }
+
+        // Jalankan hujan bunga secara terus menerus
+        setInterval(createRain, 300);
+
+        // Surat
+
+        function openLetter() {
+            const letter = document.getElementById('surat');
+            letter.classList.add('active');
+        }
+
+        function closeLetter() {
+            const letter = document.getElementById('surat');
+            letter.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
